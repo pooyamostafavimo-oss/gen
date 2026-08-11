@@ -149,12 +149,15 @@ TELEGRAM_MESSAGE_LIMIT = 4096
 
 
 def _send_telegram_request(method, payload):
+    """Sends a Telegram API request. Returns the response's `result` dict on
+    success (so callers can grab e.g. message_id), or None on failure."""
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/{method}"
     resp = requests.post(url, data=payload, timeout=30)
-    ok = resp.status_code == 200 and resp.json().get("ok")
-    if not ok:
-        print(f"❌ Telegram {method} failed: {resp.text[:300]}")
-    return ok
+    data = resp.json() if resp.headers.get("content-type", "").startswith("application/json") else {}
+    if resp.status_code == 200 and data.get("ok"):
+        return data.get("result")
+    print(f"❌ Telegram {method} failed: {resp.text[:300]}")
+    return None
 
 
 def _split_text(text, limit):
@@ -188,7 +191,8 @@ def send_to_telegram(title_en, link, summary_en, image_url):
 
     full_text = f"{header}{body_text}{footer}"
 
-    # If everything fits inside a single photo caption, keep it as one post.
+    # If it fits inside a single photo caption, post it as one message
+    # with the photo attached - the ideal, simplest case.
     if image_url and len(full_text) <= TELEGRAM_PHOTO_CAPTION_LIMIT:
         payload = {
             "chat_id": CHANNEL_ID,
@@ -199,11 +203,13 @@ def send_to_telegram(title_en, link, summary_en, image_url):
         if _send_telegram_request("sendPhoto", payload):
             return True
         print("⚠️ Sending with photo failed, retrying without photo...")
+        image_url = None  # fall through to text-only below
 
-    # Otherwise: never truncate the summary. Send the photo (if any) with
-    # just the title as caption, then send the full summary as one or more
-    # follow-up text messages so the reader gets everything.
-    posted_photo = False
+    # Summary too long for a photo caption: send the photo first (title as
+    # caption), then reply to that same photo message with the full summary
+    # so Telegram threads them together as one visual post instead of two
+    # unrelated messages.
+    photo_message_id = None
     if image_url:
         payload = {
             "chat_id": CHANNEL_ID,
@@ -211,13 +217,14 @@ def send_to_telegram(title_en, link, summary_en, image_url):
             "caption": header.strip(),
             "parse_mode": "HTML",
         }
-        posted_photo = _send_telegram_request("sendPhoto", payload)
-        if not posted_photo:
+        result = _send_telegram_request("sendPhoto", payload)
+        if result:
+            photo_message_id = result.get("message_id")
+        else:
             print("⚠️ Sending photo failed, continuing with text only...")
 
-    if posted_photo:
-        # Title already sent with the photo; don't repeat it.
-        text_body = f"{body_text}{footer}".strip()
+    if photo_message_id:
+        text_body = f"{body_text}{footer}".strip()  # title already sent with photo
     else:
         text_body = full_text
 
@@ -227,12 +234,17 @@ def send_to_telegram(title_en, link, summary_en, image_url):
             "chat_id": CHANNEL_ID,
             "text": chunk,
             "parse_mode": "HTML",
-            "disable_web_page_preview": i > 0,  # only preview on the first chunk
+            "disable_web_page_preview": False,
         }
-        ok_overall = _send_telegram_request("sendMessage", payload) and ok_overall
+        if i == 0 and photo_message_id:
+            payload["reply_to_message_id"] = photo_message_id
+        if not _send_telegram_request("sendMessage", payload):
+            ok_overall = False
         time.sleep(1)
 
-    return posted_photo or ok_overall
+    return bool(photo_message_id) or ok_overall
+
+    return True
 
 
 def main():
