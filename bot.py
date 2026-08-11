@@ -68,15 +68,32 @@ inflation, major stock/currency/gold/oil market swings, economic
 crises, major decisions by governments or large companies). Ordinary,
 low-significance news is NOT important.
 
-If it's important, write a self-contained summary that gives the reader
-everything they need to know WITHOUT having to open the original article:
-include the key facts, numbers, who/what/when, context, and why it
-matters. Write it as 4-6 clear sentences (not a teaser, not clickbait).
+If it's important, write a FULL, self-contained summary that completely
+replaces the need to read the original article. Do not write a teaser
+or a short blurb - write a thorough news brief, roughly 8-14 sentences
+(can be longer if the story genuinely has that much substance), that
+covers:
+- what happened, exactly (all key facts and figures - percentages,
+  dollar amounts, dates, names of people/institutions/countries)
+- the immediate context and background needed to understand it
+- what caused it / what led up to it, if relevant
+- reactions from officials, markets, or experts, if mentioned in the
+  source
+- why it matters and what the likely effects or next steps are
+
+Use the full Summary text provided below as your source material and
+extract every relevant detail from it - don't leave out facts just to
+keep it short. The goal is that a reader finishes your summary knowing
+everything a reader of the original article would know, and never
+needs to click through.
 
 Return ONLY raw JSON output (no ```json fences, no extra explanation) with this structure:
-{{"important": true or false, "title_en": "clean, concise English title", "summary_en": "self-contained English summary, 4-6 sentences, covering all key facts"}}
+{{"important": true or false, "title_en": "clean, concise English title", "summary_en": "full self-contained English news brief, ~8-14 sentences, covering every key fact from the source"}}
 """
-    body = {"contents": [{"parts": [{"text": prompt}]}]}
+    body = {
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {"maxOutputTokens": 1024},
+    }
     try:
         resp = requests.post(GEMINI_URL, json=body, timeout=30)
         resp.raise_for_status()
@@ -127,39 +144,95 @@ CHANNEL_HANDLE = "@GlobalEconoNews"                    # your channel's public h
 CHANNEL_LINK = "https://t.me/GlobalEconoNews"          # your channel's public link
 
 
-def send_to_telegram(title_en, link, summary_en, image_url):
-    caption = f"📌 <b>{html.escape(title_en)}</b>\n\n"
-    if summary_en:
-        short_summary = summary_en[:900] + ("..." if len(summary_en) > 900 else "")
-        caption += f"{html.escape(short_summary)}\n\n"
-    caption += f'🔗 <a href="{link}">Read the full article</a>\n\n'
-    caption += f'<a href="{CHANNEL_LINK}">{CHANNEL_HANDLE}</a>'
+TELEGRAM_PHOTO_CAPTION_LIMIT = 1024
+TELEGRAM_MESSAGE_LIMIT = 4096
 
-    if image_url:
-        url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
+
+def _send_telegram_request(method, payload):
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/{method}"
+    resp = requests.post(url, data=payload, timeout=30)
+    ok = resp.status_code == 200 and resp.json().get("ok")
+    if not ok:
+        print(f"❌ Telegram {method} failed: {resp.text[:300]}")
+    return ok
+
+
+def _split_text(text, limit):
+    """Splits long text into <= limit-sized chunks, breaking on paragraph/line
+    boundaries where possible so no sentence gets cut mid-word."""
+    if len(text) <= limit:
+        return [text]
+
+    chunks = []
+    remaining = text
+    while len(remaining) > limit:
+        cut = remaining.rfind("\n", 0, limit)
+        if cut == -1:
+            cut = remaining.rfind(" ", 0, limit)
+        if cut == -1:
+            cut = limit
+        chunks.append(remaining[:cut].rstrip())
+        remaining = remaining[cut:].lstrip()
+    if remaining:
+        chunks.append(remaining)
+    return chunks
+
+
+def send_to_telegram(title_en, link, summary_en, image_url):
+    header = f"📌 <b>{html.escape(title_en)}</b>\n\n"
+    body_text = html.escape(summary_en) if summary_en else ""
+    footer = (
+        f'\n\n🔗 <a href="{link}">Read the full article</a>\n\n'
+        f'<a href="{CHANNEL_LINK}">{CHANNEL_HANDLE}</a>'
+    )
+
+    full_text = f"{header}{body_text}{footer}"
+
+    # If everything fits inside a single photo caption, keep it as one post.
+    if image_url and len(full_text) <= TELEGRAM_PHOTO_CAPTION_LIMIT:
         payload = {
             "chat_id": CHANNEL_ID,
             "photo": image_url,
-            "caption": caption[:1024],
+            "caption": full_text,
             "parse_mode": "HTML",
         }
-        resp = requests.post(url, data=payload, timeout=30)
-        if resp.status_code == 200 and resp.json().get("ok"):
+        if _send_telegram_request("sendPhoto", payload):
             return True
-        print(f"⚠️ Sending with photo failed, retrying without photo... ({resp.text[:200]})")
+        print("⚠️ Sending with photo failed, retrying without photo...")
 
-    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-    payload = {
-        "chat_id": CHANNEL_ID,
-        "text": caption[:4096],
-        "parse_mode": "HTML",
-        "disable_web_page_preview": False,
-    }
-    resp = requests.post(url, data=payload, timeout=30)
-    if resp.status_code == 200 and resp.json().get("ok"):
-        return True
-    print(f"❌ Sending message failed: {resp.text[:300]}")
-    return False
+    # Otherwise: never truncate the summary. Send the photo (if any) with
+    # just the title as caption, then send the full summary as one or more
+    # follow-up text messages so the reader gets everything.
+    posted_photo = False
+    if image_url:
+        payload = {
+            "chat_id": CHANNEL_ID,
+            "photo": image_url,
+            "caption": header.strip(),
+            "parse_mode": "HTML",
+        }
+        posted_photo = _send_telegram_request("sendPhoto", payload)
+        if not posted_photo:
+            print("⚠️ Sending photo failed, continuing with text only...")
+
+    if posted_photo:
+        # Title already sent with the photo; don't repeat it.
+        text_body = f"{body_text}{footer}".strip()
+    else:
+        text_body = full_text
+
+    ok_overall = True
+    for i, chunk in enumerate(_split_text(text_body, TELEGRAM_MESSAGE_LIMIT)):
+        payload = {
+            "chat_id": CHANNEL_ID,
+            "text": chunk,
+            "parse_mode": "HTML",
+            "disable_web_page_preview": i > 0,  # only preview on the first chunk
+        }
+        ok_overall = _send_telegram_request("sendMessage", payload) and ok_overall
+        time.sleep(1)
+
+    return posted_photo or ok_overall
 
 
 def main():
