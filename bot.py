@@ -22,18 +22,28 @@ import requests
 
 BOT_TOKEN = os.environ["BOT_TOKEN"]          # read from GitHub Secrets
 CHANNEL_ID = os.environ["CHANNEL_ID"]        # e.g. @my_econ_news or -100xxxxxxxxxx
-GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]  # free key from aistudio.google.com/app/apikey
+
+# One or more free keys from aistudio.google.com/app/apikey.
+# Preferred: set GEMINI_API_KEYS as a comma-separated list, e.g. "key1,key2,key3".
+# Still supported: a single GEMINI_API_KEY. If both are set, GEMINI_API_KEYS wins.
+_keys_raw = os.environ.get("GEMINI_API_KEYS") or os.environ["GEMINI_API_KEY"]
+GEMINI_API_KEYS = [k.strip() for k in _keys_raw.split(",") if k.strip()]
 
 GEMINI_MODEL = "gemini-flash-lite-latest"   # Google's always-current alias for the latest stable flash-lite model
-GEMINI_URL = (
-    f"https://generativelanguage.googleapis.com/v1beta/models/"
-    f"{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}"
-)
+
+
+def _gemini_url(api_key):
+    return (
+        f"https://generativelanguage.googleapis.com/v1beta/models/"
+        f"{GEMINI_MODEL}:generateContent?key={api_key}"
+    )
+
 
 POSTED_FILE = "posted.json"
 MAX_POSTED_HISTORY = 500     # max number of stored links (keeps the file from growing forever)
 MAX_POSTS_PER_RUN = 5        # max number of posts sent per run
 MAX_CANDIDATES_PER_RUN = 25  # max number of news items sent to Gemini per run (to respect the free quota)
+GEMINI_CALL_DELAY = 3        # seconds to wait between Gemini calls (spreads out requests -> avoids RPM limit)
 
 # Global economic RSS feeds (free, no API key required)
 # Note: Bloomberg, Reuters, and ForexFactory no longer offer official free
@@ -94,15 +104,33 @@ Return ONLY raw JSON output (no ```json fences, no extra explanation) with this 
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {"maxOutputTokens": 1024},
     }
-    try:
-        resp = requests.post(GEMINI_URL, json=body, timeout=30)
-        resp.raise_for_status()
-        text = resp.json()["candidates"][0]["content"]["parts"][0]["text"]
-        text = text.strip().strip("```").replace("json\n", "", 1).strip()
-        return json.loads(text)
-    except Exception as e:
-        print(f"⚠️ Error calling Gemini: {e}")
-        return None
+
+    last_error = None
+    # Try each key once per pass. If every key is rate-limited (429), wait a
+    # bit and do one more pass over all keys before giving up on this item.
+    for attempt in range(2):
+        for key_index, api_key in enumerate(GEMINI_API_KEYS):
+            try:
+                resp = requests.post(_gemini_url(api_key), json=body, timeout=30)
+                if resp.status_code == 429:
+                    last_error = f"429 Too Many Requests (key #{key_index + 1})"
+                    print(f"⚠️ Gemini rate limit on key #{key_index + 1}, trying next key...")
+                    continue  # move on to the next key immediately
+                resp.raise_for_status()
+                text = resp.json()["candidates"][0]["content"]["parts"][0]["text"]
+                text = text.strip().strip("```").replace("json\n", "", 1).strip()
+                return json.loads(text)
+            except Exception as e:
+                last_error = e
+                print(f"⚠️ Error calling Gemini with key #{key_index + 1}: {e}")
+                continue
+
+        if attempt == 0:
+            print("⏳ All keys rate-limited, waiting 20s before one retry pass...")
+            time.sleep(20)
+
+    print(f"⚠️ Gemini call failed after trying all {len(GEMINI_API_KEYS)} key(s): {last_error}")
+    return None
 
 
 def load_posted():
@@ -248,6 +276,7 @@ def send_to_telegram(title_en, link, summary_en, image_url):
 
 
 def main():
+    print(f"🔑 Loaded {len(GEMINI_API_KEYS)} Gemini API key(s)")
     posted = load_posted()
     posted_set = set(posted)
     new_posts_count = 0
@@ -275,6 +304,9 @@ def main():
 
             summary = clean_html(entry.get("summary", ""))
             candidates_checked += 1
+
+            if candidates_checked > 1:
+                time.sleep(GEMINI_CALL_DELAY)  # spread requests out to avoid RPM limit
 
             result = ask_gemini(title, summary)
             if not result or not result.get("important"):
