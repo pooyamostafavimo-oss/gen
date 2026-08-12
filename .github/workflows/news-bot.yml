@@ -32,7 +32,10 @@ jobs:
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # Comma-separated list of Gemini keys, e.g. "AIza...1,AIza...2"
+          # Add a secret named GEMINI_API_KEYS in your repo settings.
+          # (GEMINI_API_KEY still works as a single-key fallback if you keep using that name instead.)
+          GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
         run: python bot.py
 
       - name: Commit updated posted.json
