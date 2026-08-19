@@ -1,10 +1,4 @@
 [
-  "https://www.bbc.co.uk/news/articles/cq5p59286v5o?at_medium=RSS&at_campaign=rss",
-  "https://www.bbc.co.uk/news/articles/cr5pp1m6z06o?at_medium=RSS&at_campaign=rss",
-  "https://www.bbc.co.uk/sounds/play/w3ct8mhx?at_medium=RSS&at_campaign=rss",
-  "https://www.bbc.co.uk/sounds/play/w3ct8gr6?at_medium=RSS&at_campaign=rss",
-  "https://www.bbc.co.uk/sport/football/videos/cn0nw1j48pjo?at_medium=RSS&at_campaign=rss",
-  "https://www.bbc.co.uk/news/videos/clyj57g4kkeo?at_medium=RSS&at_campaign=rss",
   "https://www.bbc.co.uk/sounds/play/w3ct8g9m?at_medium=RSS&at_campaign=rss",
   "https://www.wsj.com/livecoverage/stock-market-cpi-inflation-08-12-2026?mod=rss_markets_main",
   "https://www.wsj.com/finance/u-s-futures-higher-ahead-of-key-inflation-report-3eb19d08?mod=rss_markets_main",
@@ -498,5 +492,11 @@
   "https://www.cnbc.com/2026/08/19/us-government-debt-passes-40-trillion-mark-for-the-first-time.html",
   "https://www.cnbc.com/2026/08/19/trump-bemoans-fed-interest-rate-policy-says-us-should-be-paying-much-less.html",
   "https://www.wsj.com/finance/stocks/u-s-stocks-gain-as-treasury-buybacks-calm-bond-yields-moderna-surges-402249fb?mod=rss_markets_main",
-  "https://www.nytimes.com/2026/08/19/world/asia/china-rocket-first-stage-recovery-land.html"
+  "https://www.nytimes.com/2026/08/19/world/asia/china-rocket-first-stage-recovery-land.html",
+  "https://www.wsj.com/finance/investing/bessent-leans-into-his-role-as-americas-bond-trader-in-chief-633f28a4?mod=rss_markets_main",
+  "https://www.nytimes.com/2026/08/19/business/treasury-bonds-yields-economy.html",
+  "https://www.nytimes.com/2026/08/19/business/media/ross-barkan-plagiarism-apology.html",
+  "https://www.bbc.co.uk/news/articles/cn4nvn9w00no?at_medium=RSS&at_campaign=rss",
+  "https://www.bbc.co.uk/news/articles/c8e2yp1gg37o?at_medium=RSS&at_campaign=rss",
+  "https://www.bbc.co.uk/news/articles/cwyk9exxp2qo?at_medium=RSS&at_campaign=rss"
 ]
