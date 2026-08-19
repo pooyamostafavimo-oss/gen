@@ -1,7 +1,4 @@
 [
-  "https://www.bbc.co.uk/news/articles/cx2kgwrv6gvo?at_medium=RSS&at_campaign=rss",
-  "https://www.bbc.co.uk/news/articles/cwyl6yz719jo?at_medium=RSS&at_campaign=rss",
-  "https://www.bbc.co.uk/news/articles/c2lqvwewgp2o?at_medium=RSS&at_campaign=rss",
   "https://www.bbc.co.uk/news/articles/cre49389g1qo?at_medium=RSS&at_campaign=rss",
   "https://www.bbc.co.uk/news/articles/cp30989ee1wo?at_medium=RSS&at_campaign=rss",
   "https://www.bbc.co.uk/news/articles/cly7dqprlnvo?at_medium=RSS&at_campaign=rss",
@@ -498,5 +495,8 @@
   "https://www.nytimes.com/2026/08/19/business/iran-hormuz-oman-us-navy.html",
   "https://www.bbc.co.uk/news/articles/c78gp4y8d3eo?at_medium=RSS&at_campaign=rss",
   "https://www.wsj.com/business/energy-oil/u-s-crude-oil-stockpiles-post-weekly-increase-53a755b0?mod=rss_markets_main",
-  "https://www.nytimes.com/2026/08/19/business/bond-yields-treasury-department.html"
+  "https://www.nytimes.com/2026/08/19/business/bond-yields-treasury-department.html",
+  "https://www.wsj.com/finance/investing/why-scott-bessent-is-playing-with-the-treasury-market-828256d4?mod=rss_markets_main",
+  "https://www.wsj.com/business/ftc-warns-retailers-on-using-private-consumer-data-to-raise-prices-4467ecc3?mod=rss_markets_main",
+  "https://www.wsj.com/personal-finance/credit/gen-z-has-just-discovered-the-premium-rewards-credit-card-a800e294?mod=rss_markets_main"
 ]
