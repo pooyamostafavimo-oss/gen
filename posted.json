@@ -1,8 +1,4 @@
 [
-  "https://www.bbc.co.uk/sounds/play/w3ct8glp?at_medium=RSS&at_campaign=rss",
-  "https://www.wsj.com/finance/stocks/japanese-drama-is-no-sideshow-for-u-s-markets-b92be149?mod=rss_markets_main",
-  "https://www.wsj.com/business/energy-utilities-roundup-market-talk-6ea14c03?mod=rss_markets_main",
-  "https://www.wsj.com/business/financial-services-roundup-market-talk-35e6eb4f?mod=rss_markets_main",
   "https://www.wsj.com/business/health-care-roundup-market-talk-ff3b8388?mod=rss_markets_main",
   "https://www.wsj.com/finance/stocks/u-s-futures-edge-higher-after-subdued-inflation-data-74bd7dc4?mod=rss_markets_main",
   "https://www.wsj.com/business/basic-materials-roundup-market-talk-93c4d8bd?mod=rss_markets_main",
@@ -498,5 +494,9 @@
   "https://www.bbc.co.uk/news/articles/cpq8rjy7vxlo?at_medium=RSS&at_campaign=rss",
   "https://www.nytimes.com/2026/08/20/technology/two-binance-employees-detained-uae.html",
   "https://www.nytimes.com/2026/08/20/business/media/lloyd-robertson-dead.html",
-  "https://www.nytimes.com/2026/08/20/business/bond-yields-tech-ai-debt.html"
+  "https://www.nytimes.com/2026/08/20/business/bond-yields-tech-ai-debt.html",
+  "https://www.cnbc.com/2026/08/20/bessents-efforts-in-the-treasury-market-so-far-havent-worked-heres-what-else-he-can-try.html",
+  "https://www.wsj.com/finance/investing/stocks-slump-as-bond-yields-rise-with-crude-prices-c61f10d2?mod=rss_markets_main",
+  "https://www.wsj.com/finance/stocks/u-s-stocks-slide-as-bond-yields-rebound-walmart-disappoints-950aa1d1?mod=rss_markets_main",
+  "https://www.wsj.com/opinion/the-bond-chaos-is-a-sign-kevin-warshs-plan-is-working-0e2b8b29?mod=rss_markets_main"
 ]
