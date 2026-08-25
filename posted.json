@@ -1,11 +1,4 @@
 [
-  "https://www.bbc.co.uk/news/articles/cwyjqe62574o?at_medium=RSS&at_campaign=rss",
-  "https://www.bbc.co.uk/news/articles/c17rgd8e9gjo?at_medium=RSS&at_campaign=rss",
-  "https://www.wsj.com/health/pharma/the-key-to-pharma-m-a-never-shopping-hungry-34f55ff3?mod=rss_markets_main",
-  "https://www.bbc.co.uk/news/articles/c3dky111m40o?at_medium=RSS&at_campaign=rss",
-  "https://www.bbc.co.uk/news/articles/c20j3zrgzv2o?at_medium=RSS&at_campaign=rss",
-  "https://www.wsj.com/world/why-wall-street-thinks-the-brutal-bond-rout-is-just-getting-started-c84e9131?mod=rss_markets_main",
-  "https://www.washingtonpost.com/business/2026/08/19/american-manufacturers-are-hiring-again-could-tariffs-be-reason/",
   "https://www.bbc.co.uk/news/articles/c872r52x7jgo?at_medium=RSS&at_campaign=rss",
   "https://www.bbc.co.uk/news/articles/czdmgmzll1ro?at_medium=RSS&at_campaign=rss",
   "https://www.wsj.com/finance/investing/does-less-is-more-work-for-etfs-48bd01f1?mod=rss_markets_main",
@@ -498,5 +491,12 @@
   "https://www.wsj.com/finance/stocks/health-care-roundup-market-talk-f5630b04?mod=rss_markets_main",
   "https://www.nytimes.com/2026/08/25/business/media/forbes-shook-research-payment.html",
   "https://www.wsj.com/opinion/americas-spiraling-debt-crisis-e95dc05a?mod=rss_markets_main",
-  "https://www.wsj.com/tech/ai/druckenmillers-surprising-critique-of-bessent-was-delivered-with-the-help-of-ai-9dd0a4fd?mod=rss_markets_main"
+  "https://www.wsj.com/tech/ai/druckenmillers-surprising-critique-of-bessent-was-delivered-with-the-help-of-ai-9dd0a4fd?mod=rss_markets_main",
+  "https://www.wsj.com/pro/private-equity/nuveen-raises-1-billion-to-finance-improvements-for-commercial-buildings-d23ebe5d?mod=rss_markets_main",
+  "https://www.nytimes.com/2026/08/25/world/canada/montreal-airport-accident-worker-dead.html",
+  "https://www.nytimes.com/2026/08/25/world/middleeast/iran-us-sanctions-oil-gold.html",
+  "https://www.bbc.co.uk/news/articles/cqjkl1xvgw5o?at_medium=RSS&at_campaign=rss",
+  "https://www.bbc.co.uk/news/articles/cedjqx6zdl0o?at_medium=RSS&at_campaign=rss",
+  "https://www.bbc.co.uk/news/articles/c07ler8x9kpo?at_medium=RSS&at_campaign=rss",
+  "https://www.bbc.co.uk/news/articles/cjrg10j721jo?at_medium=RSS&at_campaign=rss"
 ]
