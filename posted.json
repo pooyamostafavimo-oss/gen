@@ -1,7 +1,4 @@
 [
-  "https://www.wsj.com/buyside/personal-finance/financial-advisors/best-wealth-management-firms?mod=rss_markets_main",
-  "https://www.nytimes.com/2026/08/18/us/politics/ai-national-debt-budget.html",
-  "https://www.nytimes.com/2026/08/18/business/saudi-uae-japan-oil-storage.html",
   "https://www.nytimes.com/2026/08/18/business/home-depot-ceo-medical-leave.html",
   "https://www.bbc.co.uk/news/articles/c8xnkjwdn5wo?at_medium=RSS&at_campaign=rss",
   "https://www.wsj.com/finance/commodities-futures/u-s-natural-gas-edges-up-in-range-bound-trade-ef2a1d58?mod=rss_markets_main",
@@ -498,5 +495,8 @@
   "https://www.wsj.com/finance/currencies/bitcoin-hits-more-than-three-month-high-0dbb50ad?mod=rss_markets_main",
   "https://www.bbc.co.uk/news/articles/c99d0yzvl49o?at_medium=RSS&at_campaign=rss",
   "https://www.bbc.co.uk/news/articles/c20vl4vm2pno?at_medium=RSS&at_campaign=rss",
-  "https://www.bbc.co.uk/news/articles/cm2g6mmjjzdo?at_medium=RSS&at_campaign=rss"
+  "https://www.bbc.co.uk/news/articles/cm2g6mmjjzdo?at_medium=RSS&at_campaign=rss",
+  "https://www.wsj.com/business/earnings/gold-fields-returns-more-cash-to-shareholders-as-earnings-jump-on-higher-prices-d164eb2e?mod=rss_markets_main",
+  "https://www.wsj.com/buyside/personal-finance/financial-advisors/best-financial-advisors?mod=rss_markets_main",
+  "https://www.wsj.com/buyside/personal-finance/financial-advisors/top-financial-advisors-for-retirees?mod=rss_markets_main"
 ]
